@@ -30,7 +30,6 @@ We'll use the [Spring Initializr](https://start.spring.io/) to create a new Spri
 The below code is for demonstration purposes only and not a complete application and whatever happens on it shouldn't affect the main point of this post.
 
 ```java
-
 @RequestMapping("api/v1/register")
 @RestController
 @RequiredArgsConstructor
@@ -42,13 +41,10 @@ public class RegistrationController {
   public ResponseEntity<Object> registerCompany(@Valid @RequestBody Company company) {
     return new ResponseEntity<>(registrationService.registerCompany(company), HttpStatus.CREATED);
   }
-
 }
-
 ```
 
 ```java
-
 @Service
 @RequiredArgsConstructor
 public class RegistrationServiceImpl implements RegistrationService {
@@ -64,18 +60,14 @@ public class RegistrationServiceImpl implements RegistrationService {
     return companyEntity.mapToModel();
   }
 }
-
 ```
 
 ```java
-
 public interface CompanyRegistrationRepository extends JpaRepository<CompanyEntity, UUID> {
 }
-
 ```
 
 ```java
-
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
@@ -104,11 +96,9 @@ public class Company {
       .build();
   }
 }
-
 ```
 
 ```java
-
 @Table(name = "company")
 @Entity
 @AllArgsConstructor
@@ -138,7 +128,6 @@ public class CompanyEntity {
                 .build();
     }
 }
-
 ```
 
 ## Test Containers
@@ -146,7 +135,16 @@ public class CompanyEntity {
 Once our application is generated, we should see our main `Application.java` file inside the `src/main` folder. In addition, if we have a look at our **src/test** folder, aside from our `ApplicationTest` class, we should see a new class called *`TestApplication`* (or *Test* + *TheNameForYourApplicationClass*). *This class is the one that will be responsible for starting our PostgreSQL container.*
 
 ```java
+@SpringBootApplication
+public class Application {
 
+    public static void main(String[] args) {
+        SpringApplication.run(Application.class, args);
+    }
+}
+```
+
+```java
 @TestConfiguration(proxyBeanMethods = false)
 public class TestApplication {
 
@@ -160,13 +158,12 @@ public class TestApplication {
         SpringApplication.from(Application::main).with(TestApplication.class).run(args);
     }
 }
-
 ```
 
 Now using the endpoint we just configured, we can test our application by hitting that endpoint. We'll do this, however, **not** by running Application inside the **main** folder,
 but we'll **instead** run `TestApplication` inside the **test** folder. This will start our PostgreSQL container, create our database, and run our application against it.
 
-PS: In case you get into an **error** where the `application fails to create the relations (tables)`, you may need to add the below line to your application.properties (or .yml) file:
+PS: In case you get into an **error** where the **application fails to create the relations (tables)**, you may need to add the below line to your application.properties (or .yml) file:
 
 ```properties
 spring.jpa.hibernate.ddl-auto=update
